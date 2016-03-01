@@ -12,7 +12,7 @@ consists of concatenation of expiration time, login, and signature:
 	expiration time || login || signature
 
 where expiration time is the number of seconds since Unix epoch UTC
-indicating when this cookie must expire (4 bytes, big-endian, uint32), login
+indicating when this cookie must expire (8 bytes, big-endian, uint64), login
 is a byte string of arbitrary length (at least 1 byte, not null-terminated),
 and signature is 32 bytes of HMAC-SHA256(expiration_time || login, k), where
 k = HMAC-SHA256(expiration_time || login, secret key).

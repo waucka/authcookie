@@ -7,7 +7,7 @@
 // 	expiration time || login || signature
 //
 // where expiration time is the number of seconds since Unix epoch UTC
-// indicating when this cookie must expire (4 bytes, big-endian, uint32), login
+// indicating when this cookie must expire (8 bytes, big-endian, uint64), login
 // is a byte string of arbitrary length (at least 1 byte, not null-terminated),
 // and signature is 32 bytes of HMAC-SHA256(expiration_time || login, k), where
 // k = HMAC-SHA256(expiration_time || login, secret key).
@@ -81,14 +81,14 @@ func New(login string, expires time.Time, secret []byte) string {
 		return ""
 	}
 	llen := len(login)
-	b := make([]byte, llen+4+32)
+	b := make([]byte, llen+8+32)
 	// Put expiration time.
-	binary.BigEndian.PutUint32(b, uint32(expires.Unix()))
+	binary.BigEndian.PutUint64(b, uint64(expires.Unix()))
 	// Put login.
-	copy(b[4:], []byte(login))
+	copy(b[8:], []byte(login))
 	// Calculate and put signature.
-	sig := getSignature([]byte(b[:4+llen]), secret)
-	copy(b[4+llen:], sig)
+	sig := getSignature([]byte(b[:8+llen]), secret)
+	copy(b[8+llen:], sig)
 	// Base64-encode.
 	return base64.URLEncoding.EncodeToString(b)
 }
@@ -137,8 +137,8 @@ func Parse(cookie string, secret []byte) (login string, expires time.Time, err e
 		err = ErrWrongSignature
 		return
 	}
-	expires = time.Unix(int64(binary.BigEndian.Uint32(data[:4])), 0)
-	login = string(data[4:])
+	expires = time.Unix(int64(binary.BigEndian.Uint64(data[:8])), 0)
+	login = string(data[8:])
 	return
 }
 

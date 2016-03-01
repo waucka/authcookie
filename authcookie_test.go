@@ -7,7 +7,7 @@ import (
 
 func TestNew(t *testing.T) {
 	secret := []byte("secret key")
-	good := "AAAAKmhlbGxvIHdvcmxk9p6koQvSacAeliAm445i7errSk1NPkYJGYZhF93wG9U="
+	good := "AAAAAAAAACpoZWxsbyB3b3JsZGVALSOGOVVAdyTB0vn84OQW4A3jBOiwW2Leyw-SrUCq"
 	c := New("hello world", time.Unix(42, 0), secret)
 	if c != good {
 		t.Errorf("expected %q, got %q", good, c)
@@ -32,8 +32,7 @@ func TestParse(t *testing.T) {
 	if l != login {
 		t.Errorf("login: expected %q, got %q", login, l)
 	}
-	// NOTE: nanos are discarded internally since only 4 bytes of timestamp are used
-	//          so we can only compare seconds here
+	//NOTE: comparing at the level of seconds is perfectly adequate here.
 	if e.Unix() != sec.Unix() {
 		t.Errorf("expiration: expected %v, got %v", sec, e)
 	}
@@ -43,9 +42,9 @@ func TestParse(t *testing.T) {
 		"",
 		"AAAAKvgQ2I_RGePVk9oAu55q-Valnf__Fx_hlTM-dLwYxXOf",
 		"badcookie",
-		"AAAAAKmhlbGxvIHdvcmxk9p6koQvSacAeliAm445i7errSk1NPkYJGYZhF93wG9U=",
-		"zAAAKmhlbGxvIHdvcmxk9p6koQvSacAeliAm445i7errSk1NPkYJGYZhF93wG9U=",
-		"AAAAAKmhlbGxvIHdvcmxk9p6kiQvSacAeliAm445i7errSk1NPkYJGYZhF93wG9U=",
+		"AAAAAAAAACpiZW5kZXKysL3WMPerrpRDuugQXcnF9lZSpQZVl7gWo3WuiDt2qA==",
+		"zAAAAAAACpiZW5kZXKysL3WMPxvbpRDuugQXcnF9lZSpQZVl7gWo3WuiDt2qA==",
+		"AAAAAAAAACpiZW5kZXKysL3WMPxvbpRDuugQXcnF9lZSpQZVerrWo3WuiDt2qA==",
 	}
 	for _, v := range bad {
 		_, _, err := Parse(v, key)
