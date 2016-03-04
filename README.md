@@ -1,7 +1,7 @@
 Package authcookie
 =====================
 
-	import "github.com/dchest/authcookie"
+	import "github.com/waucka/authcookie"
 
 Package authcookie implements creation and verification of signed
 authentication cookies.
